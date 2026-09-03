@@ -172,6 +172,12 @@ public class EscapeRoom
         // A wall or board-edge penalty is returned and added to the running score.
         score += game.movePlayer(px, py);
 
+        // Coins are collected as soon as the player lands on their space.
+        if (game.hasPrize())
+        {
+          score += game.pickupPrize();
+        }
+
         if (game.isTrap(0, 0))
         {
           System.out.println("You landed on a trap. Use spring to disarm it.");
