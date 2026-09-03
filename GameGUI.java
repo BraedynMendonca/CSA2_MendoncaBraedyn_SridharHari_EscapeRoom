@@ -264,6 +264,26 @@ public class GameGUI extends JComponent
   }
 
   /**
+   * Checks whether an uncollected prize is on the player's current space.
+   *
+   * @return true when there is a prize ready to collect
+   */
+  public boolean hasPrize()
+  {
+    double px = playerLoc.getX();
+    double py = playerLoc.getY();
+
+    for (Rectangle p: prizes)
+    {
+      if (p.getWidth() > 0 && p.contains(px, py))
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Pickup a prize and score points. If no prize is in that location, this results in a penalty.
    * <P>
    * @return positive score if a location had a prize to be picked up, otherwise a negative penalty
