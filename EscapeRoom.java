@@ -5,8 +5,6 @@
 * 10/10/2019
 * Copyright(c) 2019 PLTW to present. All rights reserved
 */
-import java.util.Scanner;
-
 /**
  * Create an escape room game where the player must navigate
  * to the other side of the screen in the fewest steps, while
@@ -14,6 +12,18 @@ import java.util.Scanner;
  */
 public class EscapeRoom
 {
+
+  /** Prints every command so the player can check the controls at any time. */
+  public static void showCommands()
+  {
+    System.out.println("\nValid commands:");
+    System.out.println("  right/r, left/l, up/u, down/d - move one space");
+    System.out.println("  jump/jr, jumpleft/jl, jumpup/ju, jumpdown/jd - move two spaces");
+    System.out.println("  pickup/p - pick up a prize on your space");
+    System.out.println("  replay - reset the board");
+    System.out.println("  help/? - show the commands again");
+    System.out.println("  quit/q - end the game\n");
+  }
 
       // describe the game with brief welcome message
       // determine the size (length and width) a player must move to stay within the grid markings
@@ -56,46 +66,92 @@ public class EscapeRoom
     
     int score = 0;
 
-    Scanner in = new Scanner(System.in);
     String[] validCommands = { "right", "left", "up", "down", "r", "l", "u", "d",
-    "quit", "q"};
+    "jump", "jr", "jumpleft", "jl", "jumpup", "ju", "jumpdown", "jd",
+    "pickup", "p", "quit", "q", "replay", "help", "?"};
+
+    showCommands();
   
     // set up game
     boolean play = true;
     while (play)
     {
-      System.out.print("Enter right, left, up, down, or quit\n>");
+      System.out.print("What would you like to do?\n>");
       String command = UserInput.getValidInput(validCommands);
 
-      // Reset the change in position before interpreting the next command.
+      // Start each turn without movement. Direction commands change these values.
       px = 0;
       py = 0;
+      boolean shouldMove = false;
 
       if (command.equals("right") || command.equals("r"))
       {
         px = m;
+        shouldMove = true;
       }
       else if (command.equals("left") || command.equals("l"))
       {
         px = -m;
+        shouldMove = true;
       }
       else if (command.equals("up") || command.equals("u"))
       {
         py = -m;
+        shouldMove = true;
       }
       else if (command.equals("down") || command.equals("d"))
       {
         py = m;
+        shouldMove = true;
+      }
+      else if (command.equals("jump") || command.equals("jr"))
+      {
+        px = 2 * m;
+        shouldMove = true;
+      }
+      else if (command.equals("jumpleft") || command.equals("jl"))
+      {
+        px = -2 * m;
+        shouldMove = true;
+      }
+      else if (command.equals("jumpup") || command.equals("ju"))
+      {
+        py = -2 * m;
+        shouldMove = true;
+      }
+      else if (command.equals("jumpdown") || command.equals("jd"))
+      {
+        py = 2 * m;
+        shouldMove = true;
+      }
+      else if (command.equals("pickup") || command.equals("p"))
+      {
+        // Picking up an empty space costs the same points that a prize is worth.
+        score += game.pickupPrize();
+      }
+      else if (command.equals("replay"))
+      {
+        System.out.println("steps=" + game.getSteps());
+        score += game.replay();
+        System.out.println("The board has been reset.");
+      }
+      else if (command.equals("help") || command.equals("?"))
+      {
+        showCommands();
       }
       else if (command.equals("quit") || command.equals("q"))
       {
         play = false;
       }
 
+      if (shouldMove)
+      {
+        // A wall or board-edge penalty is returned and added to the running score.
+        score += game.movePlayer(px, py);
+      }
+
       if (play)
       {
-        // movePlayer returns any earned penalty, which updates the total score.
-        score += game.movePlayer(px, py);
         System.out.println("score=" + score);
       }
     }
