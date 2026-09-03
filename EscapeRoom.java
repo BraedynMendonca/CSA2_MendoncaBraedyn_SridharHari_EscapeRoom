@@ -21,6 +21,8 @@ public class EscapeRoom
     System.out.println("  right/r, left/l, up/u, down - typed movement commands");
     System.out.println("  jump/jr, jumpleft/jl, jumpup/ju, jumpdown/jd - move two spaces");
     System.out.println("  pickup/p - pick up a prize on your space");
+    System.out.println("  spring/t - spring a trap on your space");
+    System.out.println("  check/c - check the spaces around you for traps");
     System.out.println("  replay - reset the board");
     System.out.println("  help/? - show the commands again");
     System.out.println("  quit/q - end the game\n");
@@ -69,7 +71,7 @@ public class EscapeRoom
 
     String[] validCommands = { "right", "left", "up", "down", "r", "l", "u", "w", "a", "s", "d",
     "jump", "jr", "jumpleft", "jl", "jumpup", "ju", "jumpdown", "jd",
-    "pickup", "p", "quit", "q", "replay", "help", "?"};
+    "pickup", "p", "spring", "t", "check", "c", "quit", "q", "replay", "help", "?"};
 
     showCommands();
   
@@ -130,6 +132,26 @@ public class EscapeRoom
         // Picking up an empty space costs the same points that a prize is worth.
         score += game.pickupPrize();
       }
+      else if (command.equals("spring") || command.equals("t"))
+      {
+        // A successful spring earns points, but guessing costs points.
+        score += game.springTrap(0, 0);
+      }
+      else if (command.equals("check") || command.equals("c"))
+      {
+        // The four checks are combined because a trap in any direction matters.
+        boolean trapNearby = game.isTrap(m, 0) || game.isTrap(-m, 0)
+            || game.isTrap(0, m) || game.isTrap(0, -m);
+
+        if (trapNearby)
+        {
+          System.out.println("Be careful. There is a trap one space away.");
+        }
+        else
+        {
+          System.out.println("No traps were found in the spaces next to you.");
+        }
+      }
       else if (command.equals("replay"))
       {
         System.out.println("steps=" + game.getSteps());
@@ -149,6 +171,17 @@ public class EscapeRoom
       {
         // A wall or board-edge penalty is returned and added to the running score.
         score += game.movePlayer(px, py);
+
+        if (game.isTrap(0, 0))
+        {
+          System.out.println("You landed on a trap. Use spring to disarm it.");
+        }
+
+        // Reaching the right side ends the game without needing to type quit.
+        if (game.hasReachedExit())
+        {
+          play = false;
+        }
       }
 
       if (play)

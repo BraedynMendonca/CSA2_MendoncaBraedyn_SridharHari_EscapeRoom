@@ -95,7 +95,6 @@ public class GameGUI extends JComponent
     frame.setSize(WIDTH, HEIGHT);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.add(this);
-    frame.setVisible(true);
     frame.setResizable(false); 
 
     // set default config
@@ -118,6 +117,9 @@ public class GameGUI extends JComponent
 
     walls = new Rectangle[totalWalls];
     createWalls();
+
+    // Wait to show the window until every board item is ready to be painted.
+    frame.setVisible(true);
   }
 
   /**
@@ -186,6 +188,8 @@ public class GameGUI extends JComponent
       // all is well, move player
       x += incrx;
       y += incry;
+      // Keep game actions in sync even if Swing has not repainted yet.
+      playerLoc.setLocation(x,y);
       repaint();   
       return 0;   
   }
@@ -294,6 +298,16 @@ public class GameGUI extends JComponent
   {
     return playerSteps;
   }
+
+  /**
+   * Checks whether the player reached the exit along the right side.
+   *
+   * @return true when the player is standing at the exit
+   */
+  public boolean hasReachedExit()
+  {
+    return x > (WIDTH - 2*SPACE_SIZE);
+  }
   
   /**
    * Set the designated number of prizes in the game.  This can be used to customize the gameboard configuration.
@@ -351,6 +365,7 @@ public class GameGUI extends JComponent
     // move player to start of board
     x = START_LOC_X;
     y = START_LOC_Y;
+    playerLoc.setLocation(x,y);
     playerSteps = 0;
     repaint();
     return win;
@@ -489,8 +504,7 @@ public class GameGUI extends JComponent
   {
     int score;
 
-    double px = playerLoc.getX();
-    if (px > (WIDTH - 2*SPACE_SIZE))
+    if (hasReachedExit())
     {
       System.out.println("YOU MADE IT!");
       score = endVal;
