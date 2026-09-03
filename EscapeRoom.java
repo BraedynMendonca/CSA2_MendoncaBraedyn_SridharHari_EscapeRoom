@@ -17,7 +17,8 @@ public class EscapeRoom
   public static void showCommands()
   {
     System.out.println("\nValid commands:");
-    System.out.println("  right/r, left/l, up/u, down/d - move one space");
+    System.out.println("  W/A/S/D - move up, left, down, or right");
+    System.out.println("  right/r, left/l, up/u, down - typed movement commands");
     System.out.println("  jump/jr, jumpleft/jl, jumpup/ju, jumpdown/jd - move two spaces");
     System.out.println("  pickup/p - pick up a prize on your space");
     System.out.println("  replay - reset the board");
@@ -66,7 +67,7 @@ public class EscapeRoom
     
     int score = 0;
 
-    String[] validCommands = { "right", "left", "up", "down", "r", "l", "u", "d",
+    String[] validCommands = { "right", "left", "up", "down", "r", "l", "u", "w", "a", "s", "d",
     "jump", "jr", "jumpleft", "jl", "jumpup", "ju", "jumpdown", "jd",
     "pickup", "p", "quit", "q", "replay", "help", "?"};
 
@@ -84,22 +85,22 @@ public class EscapeRoom
       py = 0;
       boolean shouldMove = false;
 
-      if (command.equals("right") || command.equals("r"))
+      if (command.equals("right") || command.equals("r") || command.equals("d"))
       {
         px = m;
         shouldMove = true;
       }
-      else if (command.equals("left") || command.equals("l"))
+      else if (command.equals("left") || command.equals("l") || command.equals("a"))
       {
         px = -m;
         shouldMove = true;
       }
-      else if (command.equals("up") || command.equals("u"))
+      else if (command.equals("up") || command.equals("u") || command.equals("w"))
       {
         py = -m;
         shouldMove = true;
       }
-      else if (command.equals("down") || command.equals("d"))
+      else if (command.equals("down") || command.equals("s"))
       {
         py = m;
         shouldMove = true;
