@@ -58,17 +58,46 @@ public class EscapeRoom
 
     Scanner in = new Scanner(System.in);
     String[] validCommands = { "right", "left", "up", "down", "r", "l", "u", "d",
-    "jump", "jr", "jumpleft", "jl", "jumpup", "ju", "jumpdown", "jd",
-    "pickup", "p", "quit", "q", "replay", "help", "?"};
+    "quit", "q"};
   
     // set up game
     boolean play = true;
     while (play)
     {
-      /* TODO: get all the commands working */
-	  /* Your code here */
-    
-      
+      System.out.print("Enter right, left, up, down, or quit\n>");
+      String command = UserInput.getValidInput(validCommands);
+
+      // Reset the change in position before interpreting the next command.
+      px = 0;
+      py = 0;
+
+      if (command.equals("right") || command.equals("r"))
+      {
+        px = m;
+      }
+      else if (command.equals("left") || command.equals("l"))
+      {
+        px = -m;
+      }
+      else if (command.equals("up") || command.equals("u"))
+      {
+        py = -m;
+      }
+      else if (command.equals("down") || command.equals("d"))
+      {
+        py = m;
+      }
+      else if (command.equals("quit") || command.equals("q"))
+      {
+        play = false;
+      }
+
+      if (play)
+      {
+        // movePlayer returns any earned penalty, which updates the total score.
+        score += game.movePlayer(px, py);
+        System.out.println("score=" + score);
+      }
     }
 
   
@@ -79,5 +108,3 @@ public class EscapeRoom
     System.out.println("steps=" + game.getSteps());
   }
 }
-
-        
