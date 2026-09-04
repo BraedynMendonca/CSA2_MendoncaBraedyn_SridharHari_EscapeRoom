@@ -5,6 +5,8 @@
 * 10/10/2019
 * Copyright(c) 2019 PLTW to present. All rights reserved
 */
+import java.util.Scanner;
+
 /**
  * Create an escape room game where the player must navigate
  * to the other side of the screen in the fewest steps, while
@@ -12,6 +14,21 @@
  */
 public class EscapeRoom
 {
+
+  private static final int INVALID_COMMAND_PENALTY = 1;
+
+  /** Returns whether the player's entry matches one of the available commands. */
+  public static boolean isValidCommand(String command, String[] validCommands)
+  {
+    for (String validCommand : validCommands)
+    {
+      if (command.equals(validCommand))
+      {
+        return true;
+      }
+    }
+    return false;
+  }
 
   /** Prints every command so the player can check the controls at any time. */
   public static void showCommands()
@@ -73,6 +90,7 @@ public class EscapeRoom
     "jump", "jr", "jumpleft", "jl", "jumpup", "ju", "jumpdown", "jd",
     "pickup", "p", "spring", "t", "check", "c", "quit", "q", "replay", "help", "?"};
 
+    Scanner in = new Scanner(System.in);
     showCommands();
   
     // set up game
@@ -80,7 +98,15 @@ public class EscapeRoom
     while (play)
     {
       System.out.print("What would you like to do?\n>");
-      String command = UserInput.getValidInput(validCommands);
+      String command = in.nextLine().trim().toLowerCase();
+
+      if (!isValidCommand(command, validCommands))
+      {
+        score -= INVALID_COMMAND_PENALTY;
+        System.out.println("Invalid command. You lose " + INVALID_COMMAND_PENALTY + " point.");
+        System.out.println("score=" + score);
+        continue;
+      }
 
       // Start each turn without movement. Direction commands change these values.
       px = 0;
