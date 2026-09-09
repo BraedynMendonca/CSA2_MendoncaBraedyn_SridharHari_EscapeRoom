@@ -8,6 +8,8 @@ import java.util.Scanner;
 
  public class UserInput
 {
+    private static final Scanner INPUT = new Scanner(System.in);
+
     /**
      * Verifies that one of the string array provided as an argument will be
      * returned. 
@@ -45,8 +47,7 @@ import java.util.Scanner;
     
     public static String getLine()
     {
-        Scanner s = new Scanner(System.in);
-        return s.nextLine();
+        return INPUT.nextLine();
     }
 
 
