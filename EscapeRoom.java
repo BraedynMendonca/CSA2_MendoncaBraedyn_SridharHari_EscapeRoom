@@ -33,6 +33,7 @@ public class EscapeRoom
   /** Prints every command so the player can check the controls at any time. */
   public static void showCommands()
   {
+    /**Makes this convenient for the player, as they do not have to memorize the controls */
     System.out.println("\nValid commands:");
     System.out.println("  W/A/S/D - move up, left, down, or right");
     System.out.println("  right/r, left/l, up/u, down - typed movement commands");
@@ -81,24 +82,24 @@ public class EscapeRoom
     // size of move
     int m = 60; 
     // individual player moves
-    int px = 0;
-    int py = 0; 
+    int px;
+    int py;
     
     int score = 0;
-
+/**This shows the valid commands that the player can use */
     String[] validCommands = { "right", "left", "up", "down", "r", "l", "u", "w", "a", "s", "d",
     "jump", "jr", "jumpleft", "jl", "jumpup", "ju", "jumpdown", "jd",
     "pickup", "p", "spring", "t", "check", "c", "quit", "q", "replay", "help", "?"};
 
-    Scanner in = new Scanner(System.in);
-    showCommands();
+    try (Scanner in = new Scanner(System.in)) {
+      showCommands();
   
-    // set up game
-    boolean play = true;
-    while (play)
-    {
-      System.out.print("What would you like to do?\n>");
-      String command = in.nextLine().trim().toLowerCase();
+      // set up game
+      boolean play = true;
+      while (play)
+      {
+        System.out.print("What would you like to do?\n>");
+        String command = in.nextLine().trim().toLowerCase();
 
       if (!isValidCommand(command, validCommands))
       {
@@ -112,7 +113,7 @@ public class EscapeRoom
       px = 0;
       py = 0;
       boolean shouldMove = false;
-
+/**If the command is equal... */
       if (command.equals("right") || command.equals("r") || command.equals("d"))
       {
         px = m;
@@ -216,13 +217,12 @@ public class EscapeRoom
         }
       }
 
-      if (play)
-      {
-        System.out.println("score=" + score);
+        if (play)
+        {
+          System.out.println("score=" + score);
+        }
       }
     }
-
-  
 
     score += game.endGame();
 
