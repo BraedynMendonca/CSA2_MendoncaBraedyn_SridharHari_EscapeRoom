@@ -16,6 +16,7 @@ public class EscapeRoom
 {
 
   private static final int INVALID_COMMAND_PENALTY = 1;
+  private static final int STARTING_LIVES = 3;
 
   /** Returns whether the player's entry matches one of the available commands. */
   public static boolean isValidCommand(String command, String[] validCommands)
@@ -28,6 +29,19 @@ public class EscapeRoom
       }
     }
     return false;
+  }
+
+  /** Returns the number of whole seconds elapsed since the game started. */
+  public static long getElapsedSeconds(long startTime)
+  {
+    return (System.nanoTime() - startTime) / 1_000_000_000L;
+  }
+
+  /** Prints the score, remaining lives, and elapsed game time. */
+  public static void showStatus(int score, int lives, long startTime)
+  {
+    System.out.println("score=" + score + " | lives=" + lives
+        + " | time=" + getElapsedSeconds(startTime) + " seconds");
   }
 
   /** Prints every command so the player can check the controls at any time. */
@@ -91,6 +105,8 @@ public class EscapeRoom
     "jump", "jr", "jumpleft", "jl", "jumpup", "ju", "jumpdown", "jd",
     "pickup", "p", "spring", "t", "check", "c", "quit", "q", "replay", "help", "?"};
 
+    int lives = STARTING_LIVES;
+    long startTime = System.nanoTime();
     try (Scanner in = new Scanner(System.in)) {
       showCommands();
   
@@ -105,7 +121,7 @@ public class EscapeRoom
       {
         score -= INVALID_COMMAND_PENALTY;
         System.out.println("Invalid command. You lose " + INVALID_COMMAND_PENALTY + " point.");
-        System.out.println("score=" + score);
+        showStatus(score, lives, startTime);
         continue;
       }
 
@@ -197,30 +213,42 @@ public class EscapeRoom
       if (shouldMove)
       {
         // A wall or board-edge penalty is returned and added to the running score.
-        score += game.movePlayer(px, py);
+        int movementScore = game.movePlayer(px, py);
+        score += movementScore;
+
+        if (movementScore < 0)
+        {
+          lives--;
+          System.out.println("You lost a life. Lives remaining: " + lives);
+          if (lives == 0)
+          {
+            System.out.println("You ran out of lives.");
+            play = false;
+          }
+        }
 
         // Coins are collected as soon as the player lands on their space.
-        if (game.hasPrize())
+        if (play && game.hasPrize())
         {
           score += game.pickupPrize();
         }
 
-        if (game.isTrap(0, 0))
+        if (play && game.isTrap(0, 0))
         {
           System.out.println("You landed on a trap. Use spring to disarm it.");
         }
 
         // Reaching the right side ends the game without needing to type quit.
-        if (game.hasReachedExit())
+        if (play && game.hasReachedExit())
         {
           play = false;
         }
       }
 
-        if (play)
-        {
-          System.out.println("score=" + score);
-        }
+      if (play)
+      {
+        showStatus(score, lives, startTime);
+      }
       }
     }
 
@@ -228,5 +256,7 @@ public class EscapeRoom
 
     System.out.println("score=" + score);
     System.out.println("steps=" + game.getSteps());
+    System.out.println("lives=" + lives);
+    System.out.println("time=" + getElapsedSeconds(startTime) + " seconds");
   }
 }
